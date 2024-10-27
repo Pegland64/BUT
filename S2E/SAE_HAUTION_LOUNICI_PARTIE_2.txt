@@ -1,0 +1,17 @@
+SAé S2 04 Exploitation d’une base de données
+
+HAUTION Ilan
+LOUNICI Ilyes
+
+
+Première partie
+
+1°) 
+
+a) Quels sont les 3 villes où les ventes sont les plus fortes en 2022 ?
+
+les 3 villes où les ventes sont les plus fortes en 2022 sont dans l'ordre decroissant Angers, La Rochelle et Perpignan
+
+b) Même question en 2023 ?
+
+les 3 villes où les ventes sont les plus fortes en 2023 sont dans l'ordre decroissant Paris, Niort et Lyon

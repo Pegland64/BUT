@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="fr">
+    <meta charset="utf-8">
+    <title>RANDOMATRON
+	</title>
+</head>
+<body>
+<script >
+ 	let nombrerandom = Math.ceil(Math.random()*1000);
+	let proposition = "";
+	let i = 0;
+	while (nombrerandom != proposition || i<=20){
+		proposition = prompt("Donner un entier entre 0 et 1000"," ");
+		let nombre = parseInt(proposition);
+		if(nombre < nombrerandom){
+			alert('Trop petit');
+		}else if(nombre > nombrerandom){
+			alert('Trop grand');
+		}else{
+			alert('Bravo');
+		}
+		i++
+	}
+	if (i === 20){
+		alert("T'ES TROP GUEZ AHAHAHAHAHA fallait trouver " + nombrerandom);
+	}
+</script>
+</body>
+</html>	

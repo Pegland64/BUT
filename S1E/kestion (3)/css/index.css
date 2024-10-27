@@ -1,0 +1,158 @@
+
+.titre{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: red;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  
+  .nav{
+    display: flex;
+    justify-content: center;
+    justify-content: space-between;
+  }
+  
+  .content{
+    background-color: green;
+    border-radius: 10px;
+    padding: 20px 20px 20px 20px;
+    text-align : center;
+    box-sizing: border-box;
+    width: 30%;
+    height: 100%;
+    margin: 10px;
+    box-sizing: content-box;
+    overflow: scroll;
+  }
+  .content img{
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    max-height: 500px;
+  }
+  .apropos{
+    background-color: rgb(255, 247, 0);
+    border-radius: 10px;
+    padding: 0 20px 0 20px;
+    display: flex;
+    justify-content: center;
+    margin: 50px;
+  }
+  .imagedefond { 
+  
+    background-image: url("../images/priere.png");
+    background-color: grey
+   
+  }
+
+  .contentap{
+    background-color: rgb(255, 153, 0);
+    border-radius: 10px;
+    padding: 20px 20px 20px 20px;
+    text-align:center;
+    display : flex;
+    justify-content : center;
+    margin : 10px
+  }
+
+  .contentap  img {
+    width : 100%;
+    max-width: 600px;
+    height : 100%;
+    max-height: 800px;
+  }
+ 
+  .titreap{
+    color: white;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: green;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 20px;
+    font-size: 20px;
+  }
+  @media (max-width : 900px){
+    .nav {
+     flex-direction: column;
+     height: auto;
+     width: auto;
+    }
+    .content{
+      height: auto;
+      width: auto;
+    }
+    .contentap{
+      height: auto;
+      width: auto;
+    }
+  }
+
+  #retour{
+    justify-content: left;
+    color: black;
+    font-size: 30px;
+  }
+
+  #lien{
+    font-size: 1.1em;
+    color : white;
+  }
+  h5{
+    font-size: 40px;
+  }
+  h6{
+    font-size: 40px;
+  }
+  .contentap2{
+    background-color: rgb(255, 153, 0);
+    padding: 0px 20px 20px 20px;
+    text-align:center;
+    display : flex;
+    justify-content : center;
+    overflow: scroll;
+  }
+  .contentap2  img {
+    width : 100%;
+    max-width: 1409px;
+    height : 100%;
+    max-height: 781px;
+  }
+
+  .articlefr{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: blue;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    color: white;
+  }
+
+  .articlear{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: green;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    color: white;
+  }
+  .titrefr{
+    color: white;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: blue;
+    border-radius: 10px;
+    margin: 10px;
+    padding: 20px;
+    font-size: 20px;
+  }

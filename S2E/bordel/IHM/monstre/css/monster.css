@@ -1,0 +1,51 @@
+.monster {
+    display: inline-block;
+    vertical-align: top;
+    height: 100px;
+    margin-left: 50px;
+    text-align: center;
+}
+
+#monster {
+    border-radius: 5px;
+    border: 1px solid grey;
+    background-color: orange;
+    width: 100px;
+    text-align: center;
+}
+
+#actionbox {
+    border: 1px solid grey;
+    width: 500px;
+    overflow: auto;
+}
+
+#actionbox > p {
+    margin: 0 ;
+}
+
+ul#status {
+    display: flex;
+    flex-direction: row;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+ul#status li {
+    margin-left : 20px;
+    text-align: center;
+}
+
+button {
+    width: 75px;
+    height: 40px;
+    background-color: deepskyblue;
+    border: 0;
+    margin-right: 8px;
+}
+
+button:hover {
+    background-color: dodgerblue;
+}

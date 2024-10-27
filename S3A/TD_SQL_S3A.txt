@@ -1,0 +1,37 @@
+Etude de cas : Système de restauration
+
+Modéliser les données de GOODFOOD par un schéma de relations. Pour ce faire,
+vous déterminerez les dépendances fonctionnelles, vous calculerez la couverture
+minimale, puis vous concevrez les relations en 3 FN.
+
+(1) numtable -> place
+(2) numcomm -> numtable, datcomm, nbpers, datpaie, modpaie, montantcomm, dataffect
+(3) numplat -> libellé, type, prixunit
+(4) numserv -> nomserv, grade
+(5) numcomm, numplat -> quantité
+(6) numtable, dataffect -> numserv
+
+(1)numtable→place
+(2'1)numcomm→numtable
+(2'2)numcomm→datcomm
+(2'3)numcomm→nbpers
+(2'4)numcomm→datpaie
+(2'5)numcomm→modpaie
+(2'6)numcomm→montantcomm
+(2'7)numcomm→dataffect
+(3'1)numplat→libelle
+(3'2)numplat→type
+(3'3)numplat→prixunit
+(4'1)numserv→nomserv
+(4'2)numserv→grade
+(5)numcomm,numplat→quantite
+(6)numtable,dataffect→numserv
+
+CLé minimal : numcom, numplat
+
+Tabl(numtable P, nbplace)
+Commande(numcom P, numtable, datcomm, nbpers, datpaie, modpaie, montantcomm, dataffect)
+Plat(numplat P, libellé, type, prixunit)
+Serveur(numserv P, nomserv, grade)
+Contient(numcom P, numplat P, quantité)
+Affecter(numtable P, dateaffect P, numserv)

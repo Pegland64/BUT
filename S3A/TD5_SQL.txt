@@ -1,0 +1,25 @@
+. Signification des dépendances fonctionnelles (DF) sur la relation R :
+a) (CINÉMA, SALLE, SÉANCE) → TITRE
+
+Cela signifie qu'une combinaison donnée de cinéma, salle et séance détermine un film unique. En d'autres termes, dans un même cinéma, pour une salle et une séance donnée, un seul film est projeté à un instant donné. Il n'y a donc pas de films différents projetés simultanément dans la même salle à la même séance.
+b) TITRE → MS
+
+Cela signifie que chaque film (identifié par son titre) a un seul metteur en scène. Autrement dit, un même film ne peut pas avoir plusieurs réalisateurs, et le titre d’un film suffit à déterminer son metteur en scène.
+c) (TITRE, CINÉMA) → SALLE
+
+Cela signifie que, dans un même cinéma, un film est projeté dans une seule salle donnée. Autrement dit, un film donné ne peut pas être projeté dans plusieurs salles différentes d’un même cinéma en même temps.
+2. Traduction des assertions en termes de DF :
+2.1. « Il ne passe pas deux films différents d’un même metteur en scène dans un même cinéma. »
+
+Cela signifie que, dans un même cinéma, un metteur en scène ne peut pas avoir deux films différents projetés. En termes de dépendance fonctionnelle, cela se traduit par :
+
+(CINEˊMA,MS)→TITRE(CINEˊMA,MS)→TITRE
+
+Autrement dit, pour un cinéma donné et un metteur en scène donné, il y a au plus un film projeté.
+2.2. « Le même acteur peut avoir joué dans deux films différents projetés la même semaine durant la même séance d’un même cinéma. »
+
+Cela signifie qu'il n'y a pas de contrainte interdisant qu'un acteur soit présent dans deux films différents projetés au même moment dans le même cinéma. Cela implique qu’il n'y a pas de dépendance fonctionnelle entre les attributs ACTEUR et les autres attributs comme CINÉMA, SALLE et SÉANCE. Aucun DF ne peut donc restreindre cette possibilité.
+
+En résumé :
+
+    Aucun DF supplémentaire n'est nécessaire pour cette assertion, puisqu'elle affirme qu'il est possible pour un acteur d'apparaître dans deux films différents projetés au même moment dans un même cinéma.

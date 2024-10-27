@@ -1,0 +1,20 @@
+html {
+    background-color: white;
+    /* Utile pour mieux constater les hauteurs relatives */
+    /* Attention : bien comprendre que cela contraint la hauteur de cet */
+    /* éléments à la hauteur disponible dans le navigateur */
+    height: 100%;
+}
+
+body {
+    background-color: oldlace;
+    /* Utile pour mieux constater les hauteurs relatives */
+    /* Attention : bien comprendre que cela contraint la hauteur de cet */
+    /* éléments à la hauteur disponible dans le navigateur (via html) */
+    height: 100%;
+}
+
+em {
+    background-color: peru;
+}
+

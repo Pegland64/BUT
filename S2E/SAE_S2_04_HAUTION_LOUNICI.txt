@@ -1,0 +1,616 @@
+S2.04 Exploitation d’une base de données
+
+HAUTION Ilan
+LOUNICI Ilyes
+S2E
+
+1. Consulter les données disponibles sous la forme d’un fichier Excel « LibrairiePlusBD.xlsx »
+
+2. Identifier les clés étrangères.
+
+3. [SQL] L’utilisateur ensinfo dispose d’une copie des tables : C_LIVREPLUS, C_CATEGORIE,
+C_CLIENT, C_LIVRE, C_PAIMENT, C_ABONNEMENT.
+Récupérer ces tables et leurs données à partir de ce compte. Ajouter les contraintes de clés
+primaires et clés étrangères.
+
+Requete :
+
+create table C_LIVREPLUS as select * FROM ensinfo.c_livreplus;
+create table C_CATEGORIE as select * FROM ensinfo.C_CATEGORIE;
+create table C_CLIENT as select * FROM ensinfo.C_CLIENT;
+create table C_PAIEMENT as select * FROM ensinfo.C_PAIEMENT;
+create table C_LIVRE as select * FROM ensinfo.C_LIVRE;
+create table C_ABONNEMENT as select * FROM ensinfo.C_ABONNEMENT;
+
+4.[SQL] Créer les tables manquantes sans oublier les contraintes de clés primaires et étrangères.
+
+ALTER TABLE C_ABONNEMENT
+    ADD PRIMARY KEY(numAbo);
+    
+ALTER TABLE C_CATEGORIE
+    ADD PRIMARY KEY(codeCat);
+    
+ALTER TABLE C_CLIENT
+    ADD PRIMARY KEY(codeCli);
+    
+ALTER TABLE C_LIVRE
+    ADD PRIMARY KEY(ISBN);
+    
+ALTER TABLE C_LIVREPLUS
+    ADD PRIMARY KEY(numlivreplus);
+    
+ALTER TABLE C_PAIEMENT
+    ADD PRIMARY KEY(modeP);
+    
+CREATE TABLE C_COMMANDE(
+    numcom number(5),
+    codecli varchar2(8),
+    dateCom DATE,
+    modeP CHAR(2),
+    remise number(3,2),
+    statut VARCHAR(50),
+    numlivreplus varchar2(5),
+    PRIMARY KEY (numcom),
+    FOREIGN KEY (CODECLI) REFERENCES C_CLIENT(CODECLI),
+    FOREIGN KEY (ModeP) REFERENCES C_PAIEMENT(ModeP),
+    FOREIGN KEY (numlivreplus) REFERENCES C_livreplus(numlivreplus)
+);
+
+CREATE TABLE C_LIVREDOCCASION(
+    ISBN NUMBER(5),
+    numEx NUMBER(5),
+    etat VARCHAR2(50),
+    numlivreplus varchar2(5),
+    PRIMARY KEY (ISBN,numEx),
+    FOREIGN KEY (numlivreplus) REFERENCES C_livreplus(numlivreplus),
+    FOREIGN KEY (ISBN) REFERENCES C_LIVRE(ISBN)
+);
+
+CREATE TABLE C_LIGNECOMMANDE(
+    numcom number(5),
+    ISBN NUMBER(5),
+    numEx NUMBER(5),
+    qte NUMBER(5),
+    PRIMARY KEY (ISBN,numcom,numEx),
+    FOREIGN KEY (ISBN) REFERENCES C_LIVRE(ISBN),
+    FOREIGN KEY (numcom) REFERENCES C_COMMANDE(numcom)
+);
+
+CREATE TABLE C_STOCK(
+    ISBN NUMBER(5),
+    numlivreplus varchar2(5),
+    quantite number(5),
+    PRIMARY KEY (ISBN,numlivreplus),
+    FOREIGN KEY (ISBN) REFERENCES C_LIVRE(ISBN),
+    FOREIGN KEY (numlivreplus) REFERENCES C_livreplus(numlivreplus)
+);
+
+ALTER TABLE C_ABONNEMENT ADD CONSTRAINT FKabonnement FOREIGN KEY (codeCli) REFERENCES C_Client(codeCli);
+
+5.Charger les données manquantes à partir du fichier LibrairieBD.xlsx fourni. Utiliser les
+fonctionnalités d’importations à partir de fichiers disponibles dans votre environnement (SQL
+Developer ou DataGrip).
+
+6. [SQL] Afficher le titre du livre le plus vendu en 2022.
+
+Requete :
+
+SELECT C_LIVRE.titre
+FROM C_LIVRE
+INNER JOIN C_LIGNECOMMANDE ON C_LIGNECOMMANDE.ISBN = C_LIVRE.ISBN
+WHERE C_Commande = TO_DATE('2022','YYYY')
+group by C_LIVRE.titre
+HAVING COUNT(numcom)>=ALL(SELECT COUNT(numcom)
+                            FROM C_LIVRE
+                            INNER JOIN C_LIGNECOMMANDE ON C_LIGNECOMMANDE.ISBN = 				    C_LIVRE.ISBN
+                            WHERE anneeEdition = '2022'
+                            group by C_LIVRE.titre);
+
+Resultat :
+
+La nurse anglaise
+Contre coeur
+
+7. [SQL] Afficher le nombre de livres par catégorie (libellé).
+
+SELECT C_CATEGORIE.libelleCat, COUNT(C_LIVRE.ISBN)
+FROM C_LIVRE
+JOIN C_CATEGORIE ON C_LIVRE.codeCat = C_CATEGORIE.codeCat
+GROUP BY C_CATEGORIE.libelleCat;
+
+Resultat :
+
+Cuisine Forme Santé	11
+Santé	7
+Bande dessinée	14
+Encyclopédies	20
+Psychologie	6
+Arts divinatoires	12
+Histoire	23
+Loisirs Plein air	14
+Evasion Tourisme	21
+Suspense	29
+Littérature	86
+Vie pratique	19
+
+8. [PL/SQL] Ecrire une fonction stockée CalculPrixOccasion permettant de calcul le prix de vente d’un livre d’occasion sachant que :
+
+Neuf : 90% du prix neuf
+Bon : 70% du prix neuf
+Moyen : 50% du prix neuf
+Abimé : 30% du prix neuf
+Tout autre état : 0
+
+Requete :
+
+CREATE OR REPLACE FUNCTION CalculPrixOccasion(
+    p_ISBN IN C_LIVRE.ISBN%TYPE,
+    p_etat IN C_LIVREDOCCASION.etat%TYPE
+) RETURN NUMBER
+IS
+    v_prix_occasion NUMBER;
+    v_prix_neuf NUMBER;
+BEGIN
+    SELECT prixNeuf INTO v_prix_neuf
+    FROM C_LIVRE
+    WHERE ISBN = p_ISBN;
+
+    IF p_etat = 'Neuf' THEN
+        v_prix_occasion := v_prix_neuf * 0.9;
+    ELSIF p_etat = 'Bon' THEN
+        v_prix_occasion := v_prix_neuf * 0.7;
+    ELSIF p_etat = 'Moyen' THEN
+        v_prix_occasion := v_prix_neuf * 0.5;
+    ELSIF p_etat = 'Abimé' THEN
+        v_prix_occasion := v_prix_neuf * 0.3;
+    ELSE
+        v_prix_occasion := 0;
+    END IF;
+
+    RETURN v_prix_occasion;
+END;
+
+Resultat :
+
+Elément Function CALCULPRIXOCCASION compilé
+
+9. [SQL] Afficher pour le livre dont l’ISNB est 21153, le prix de vente en occasion ainsi que la succursale (ville) où les exemplaires sont disponibles. Utiliser la fonction précédente.
+
+Requete :
+
+SELECT  CalculPrixOccasion(C_LIVREDOCCASION.ISBN, C_LIVREDOCCASION.etat), C_LIVREPLUS.ville
+FROM C_LIVREDOCCASION
+INNER JOIN C_LIVREPLUS ON C_LIVREDOCCASION.numLivrePlus = C_LIVREPLUS.numLivrePlus
+WHERE C_LIVREDOCCASION.ISBN = 21153;
+
+Resultat :
+
+8,323	MONTPELLIER
+8,323	ARGELES SUR MER
+
+10. [SQL et PL/SQL] L’entreprise souhaite revoir les modalités de calcul des prix des livres d’occasion.
+Pour cela, une nouvelle table C_COEFFOCCASION contenant pour chaque état, un coefficient de
+réduction est créée.
+Ecrire la requête de création de la table. Insérer les données suivantes :
+neuf, 0.9
+bon, 0.7
+moyen, 0.5
+abimé, 0.3
+Créer une copie de la fonction CalculPrixOccasion et modifier la pour tenir compte de cette
+nouvelle structuration (CalculPrixOccasionV2). Utiliser une exception pour traiter le cas où l'ISBN
+où le numEx n'existe pas, la fonction retourne NULL dans ce cas.
+Pourquoi l’entreprise a opté pour cette seconde solution ? Quels avantages ?
+
+Requete : 
+
+CREATE OR REPLACE FUNCTION CalculPrixOccasionV2(
+    p_ISBN IN C_LIVRE.ISBN%TYPE,
+    p_etat IN C_LIVREDOCCASION.etat%TYPE
+) RETURN NUMBER
+IS
+    v_prix_occasion NUMBER;
+    v_prix_neuf NUMBER;
+BEGIN
+    SELECT prixNeuf INTO v_prix_neuf
+    FROM C_LIVRE
+    WHERE ISBN = p_ISBN;
+
+    IF p_etat = 'Neuf' THEN
+        v_prix_occasion := v_prix_neuf * 0.9;
+    ELSIF p_etat = 'Bon' THEN
+        v_prix_occasion := v_prix_neuf * 0.7;
+    ELSIF p_etat = 'Moyen' THEN
+        v_prix_occasion := v_prix_neuf * 0.5;
+    ELSIF p_etat = 'Abimé' THEN
+        v_prix_occasion := v_prix_neuf * 0.3;
+    ELSE
+        v_prix_occasion := 0;
+    END IF;
+
+    RETURN v_prix_occasion;
+END;
+
+CREATE TABLE C_COEFFOCCASION(
+    etat varchar2(50),
+    coeff_reduc number(2,1),
+    PRIMARY KEY(etat)
+);
+
+INSERT INTO C_COEFFOCCASION (etat, coeff_reduc) VALUES ('neuf', 0.9);
+INSERT INTO C_COEFFOCCASION (etat, coeff_reduc) VALUES ('bon', 0.7);
+INSERT INTO C_COEFFOCCASION (etat, coeff_reduc) VALUES ('moyen', 0.5);
+INSERT INTO C_COEFFOCCASION (etat, coeff_reduc) VALUES ('abimé', 0.3);
+
+CREATE OR REPLACE FUNCTION CalculPrixOccasionV2(
+    p_ISBN IN C_LIVRE.ISBN%TYPE,
+    p_etat IN C_LIVREDOCCASION.etat%TYPE,
+    p_numEx IN C_LIVREDOCCASION.numEx%TYPE
+) RETURN NUMBER
+IS
+    v_prix_occasion NUMBER;
+    v_prix_neuf NUMBER;
+    v_coefficient NUMBER;
+BEGIN
+    SELECT prixNeuf INTO v_prix_neuf
+    FROM C_LIVRE
+    WHERE ISBN = p_ISBN;
+
+    SELECT coeff_reduc INTO v_coefficient
+    FROM C_COEFFOCCASION
+    WHERE etat = p_etat;
+
+    v_prix_occasion := v_prix_neuf * v_coefficient;
+
+    RETURN v_prix_occasion;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+    WHEN OTHERS THEN
+        RETURN NULL;
+END;
+
+Resultat :
+
+Elément Function CALCULPRIXOCCASIONV2 compilé
+
+11.Refaire la question 9 avec cette nouvelle fonction. Supprimer la fonction « CalculPrixOccasion ».
+Renommer la fonction « CalculPrixOccasionV2 » en « CalculPrixOccasion ».
+
+Requete :
+
+DROP FUNCTION CalculerPrixOccasion;
+
+CREATE OR REPLACE FUNCTION CalculPrixOccasion(
+    p_ISBN IN C_LIVRE.ISBN%TYPE,
+    p_etat IN C_LIVREDOCCASION.etat%TYPE,
+    p_numEx IN C_LIVREDOCCASION.numEx%TYPE
+) RETURN NUMBER
+IS
+    v_prix_occasion NUMBER;
+    v_prix_neuf NUMBER;
+    v_coefficient NUMBER;
+BEGIN
+    SELECT prixNeuf INTO v_prix_neuf
+    FROM C_LIVRE
+    WHERE ISBN = p_ISBN;
+
+    SELECT coeff_reduc INTO v_coefficient
+    FROM C_COEFFOCCASION
+    WHERE etat = p_etat;
+
+    v_prix_occasion := v_prix_neuf * v_coefficient;
+
+    RETURN v_prix_occasion;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+    WHEN OTHERS THEN
+        RETURN NULL;
+END;
+
+SELECT  CalculPrixOccasion(C_LIVREDOCCASION.ISBN, C_COEFFOCCASION.etat, C_LIVREDOCCASION.numex), C_LIVREPLUS.ville
+FROM C_LIVREDOCCASION
+INNER JOIN C_LIVREPLUS ON C_LIVREDOCCASION.numLivrePlus = C_LIVREPLUS.numLivrePlus
+INNER JOIN C_COEFFOCCASION ON C_COEFFOCCASION.etat = C_LIVREDOCCASION.etat
+WHERE C_LIVREDOCCASION.ISBN = 21153;
+
+Resultat :
+
+8,323	MONTPELLIER
+8,323	ARGELES SUR MER
+
+12. [PL/SQL] Ecrire une fonction stockée qui détermine si un client a un abonnement en cours de validité à une date donnée. La fonction retourne un booléen.
+
+Requete :
+
+CREATE OR REPLACE FUNCTION AbonnementValide(
+    p_codeCli NUMBER,
+    p_dateCheck DATE
+) RETURN BOOLEAN IS
+    v_abonnement_en_cours NUMBER := 0;
+    v_result boolean;
+BEGIN
+    SELECT COUNT(*)
+    INTO v_abonnement_en_cours
+    FROM C_ABONNEMENT
+    WHERE codeCli = p_codeCli 
+    AND p_dateCheck BETWEEN dateDebAbo AND dateFinAbo 
+    AND statutAbo = 'en cours';
+    IF v_abonnement_en_cours > 0 THEN
+        v_result := TRUE;
+    ELSE
+        v_result := FALSE;
+    END IF;
+    
+    return v_result;
+END;
+
+
+DECLARE
+    abonnement BOOLEAN;
+    d_codeCli NUMBER;
+    d_date DATE;
+BEGIN
+    d_codeCli :='&code client';
+    d_date :='&date';
+    abonnement := AbonnementValide(d_codeCli, d_date);
+
+    IF abonnement THEN
+        DBMS_OUTPUT.PUT_LINE('Le client a un abonnement en cours de validité.');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Le client n''a pas d''abonnement en cours de validité.');
+    END IF;
+END;
+
+13.[PL/SQL] L'attribut remise est actuellement à NULL. On souhaite le mettre à jour pour toutes les
+commandes. Il faut vérifier que le client a un abonnement en cours de validité au moment de la
+commande. Ecrire la procédure stockée MAJRemiseCommandes en PL/SQL permettant de faire
+ce traitement. Utiliser un curseur de mise à jour.
+Exécuter la procédure.
+
+Requete :
+
+CREATE OR REPLACE PROCEDURE RemiseCommande IS
+BEGIN
+    FOR cmd IN (
+        SELECT c.numCom, c.codeCli, c.dateCom, c.remise
+        FROM C_COMMANDE c
+    ) LOOP
+        IF AbonnementValide(cmd.codeCli, cmd.dateCom) THEN
+            UPDATE C_COMMANDE
+            SET remise = 0.20
+            WHERE numCom = cmd.numCom;
+
+            DBMS_OUTPUT.PUT_LINE('Remise mise à jour pour la commande ' || cmd.numCom || ' du client ' || cmd.codeCli);
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Le client ' || cmd.codeCli || ' n''a pas d''abonnement en cours de validité pour la commande ' || cmd.numCom);
+        END IF;
+    END LOOP;
+END;
+
+Resultat :
+
+
+
+14. [SQL et PL/SQL] Ajouter une colonne montLigne à la table C_LIGNECOMMANDE. Ecrire une
+procédure stockée permettant de mettre à jour cette colonne. Utiliser un curseur de mise à jour.
+Exécuter la procédure
+
+Requete :
+
+ALTER TABLE C_LIGNECOMMANDE
+ADD montLigne NUMBER(6,2);
+
+CREATE OR REPLACE PROCEDURE MettreAJourMontLigne
+IS
+    CURSOR cur_lignes IS
+        SELECT numCom, ISBN, numEx, qte
+        FROM C_LIGNECOMMANDE;
+
+    v_prix_unitaire NUMBER;
+BEGIN
+    FOR ligne IN cur_lignes LOOP
+        SELECT prixNeuf INTO v_prix_unitaire
+        FROM C_LIVRE
+        WHERE ISBN = ligne.ISBN;
+
+        UPDATE C_LIGNECOMMANDE
+        SET montLigne = v_prix_unitaire * ligne.qte
+        WHERE numCom = ligne.numCom
+        AND ISBN = ligne.ISBN
+        AND numEx = ligne.numEx;
+    END LOOP;
+    COMMIT;
+END;
+
+Resultat :
+
+Elément Procedure METTREAJOURMONTLIGNE compilé
+
+15.[SQL] Ecrire une vue (C_MontantCommande) permettant d'afficher pour chaque commande : le
+numéro de la commande, le montant avant remise, la remise et le montant à payer tenant
+compte de l’éventuelle remise.
+
+Requete :
+
+CREATE OR REPLACE VIEW C_MontantCommande AS
+SELECT C.numCom, L.montant_ligne AS montant_avant_remise, C.remise, (L.montant_ligne - L.montant_ligne * C.remise) AS montant_apres_remise
+FROM (SELECT numCom, remise FROM C_COMMANDE) C
+INNER JOIN (SELECT numCom, montligne AS montant_ligne FROM C_LIGNECOMMANDE) L ON C.numCom = L.numCom;
+
+Resultat :
+
+View C_MONTANTCOMMANDE créé(e).
+
+16. [SQL] Afficher le nombre total de commander par succursale en dehors des ventes en ligne.
+
+Requete :
+
+SELECT C_LIVREPLUS.ville ,COUNT(DISTINCT C_COMMANDE.numCom)
+FROM C_COMMANDE 
+INNER JOIN C_LIVREPLUS ON C_COMMANDE.numLivrePlus = C_LIVREPLUS.numLivrePlus
+WHERE C_COMMANDE.numLivrePlus != 'LG'
+GROUP BY C_LIVREPLUS.ville;
+
+Resultat :
+
+PERPIGNAN	36
+LE MANS	31
+ROCHEFORT	28
+LA ROCHELLE	41
+NIORT	45
+LYON	34
+ANGOULEME	36
+ANGERS	42
+ARGELES SUR MER	35
+PARIS	42
+
+17.[SQL] Afficher le chiffre d’affaires par succursale pour l’année 2022 puis l’année 2023 toujours en dehors des ventes en ligne, trié par ville.
+
+Requete :
+
+SELECT C_LIVREPLUS.ville,SUM(C_LIGNECOMMANDE.qte * C_LIVRE.prixNeuf)
+FROM C_COMMANDE
+INNER JOIN C_LIGNECOMMANDE ON C_COMMANDE.numCom = C_LIGNECOMMANDE.numCom
+INNER JOIN C_LIVRE ON C_LIGNECOMMANDE.ISBN = C_LIVRE.ISBN
+INNER JOIN C_LIVREPLUS ON C_COMMANDE.numLivrePlus = C_LIVREPLUS.numLivrePlus
+WHERE C_COMMANDE.dateCom BETWEEN TO_DATE('2022-01-01', 'YYYY-MM-DD') AND TO_DATE('2022-12-31', 'YYYY-MM-DD') AND C_COMMANDE.numLivrePlus != 'LG'
+GROUP BY C_LIVREPLUS.ville
+ORDER BY C_LIVREPLUS.ville;
+    
+SELECT C_LIVREPLUS.ville,SUM(C_LIGNECOMMANDE.qte * C_LIVRE.prixNeuf)
+FROM C_COMMANDE
+INNER JOIN C_LIGNECOMMANDE ON C_COMMANDE.numCom = C_LIGNECOMMANDE.numCom
+INNER JOIN C_LIVRE ON C_LIGNECOMMANDE.ISBN = C_LIVRE.ISBN
+INNER JOIN C_LIVREPLUS ON C_COMMANDE.numLivrePlus = C_LIVREPLUS.numLivrePlus
+WHERE C_COMMANDE.dateCom BETWEEN TO_DATE('2023-01-01', 'YYYY-MM-DD') AND TO_DATE('2023-12-31', 'YYYY-MM-DD') AND C_COMMANDE.numLivrePlus != 'LG'
+GROUP BY C_LIVREPLUS.ville
+ORDER BY C_LIVREPLUS.ville;
+
+Resultat :
+
+ANGERS	1165,95
+ANGOULEME	1693,93
+ARGELES SUR MER	1076,33
+LA ROCHELLE	1775,57
+LE MANS	970,96
+LYON	1185,59
+NIORT	1836,17
+PARIS	1386,07
+PERPIGNAN	1690,4
+ROCHEFORT	1109,08
+
+ANGERS	1175,03
+ANGOULEME	498,15
+ARGELES SUR MER	2185,25
+LA ROCHELLE	405,78
+LE MANS	240,11
+LYON	573,97
+NIORT	624,54
+PARIS	1266,73
+PERPIGNAN	464,57
+ROCHEFORT	74,7
+
+18. [SQL] Afficher le nombre de clients par succursale, en excluant les commandes en ligne, trié par
+ville.
+
+Requete :
+
+SELECT C_CLIENT.villeCli,COUNT(DISTINCT C_CLIENT.codeCli)
+FROM C_CLIENT 
+INNER JOIN C_COMMANDE  ON C_CLIENT.codeCli = C_COMMANDE.codeCli
+INNER JOIN C_LIVREPLUS  ON C_COMMANDE.numLivrePlus = C_LIVREPLUS.numLivrePlus
+WHERE C_LIVREPLUS.adresse IS NOT NULL
+GROUP BY C_CLIENT.villeCli
+ORDER BY C_CLIENT.villeCli;
+
+Resultat :
+
+ANGERS	2
+ANGOULEME	2
+Angouleme	1
+ARCACHON	3
+ARGELES SUR MER	3
+BAYONNE	2
+GANGES	3
+ganges	1
+LA ROCHELLE	3
+LE MANS	3
+Le mans	1
+le mans	1
+LYON	1
+MONTPELLIER	1
+montpellier	1
+NANTES	5
+nantes	6
+NIORT	2
+niort	2
+PARIS	2
+paris	1
+PERPIGNAN	2
+perpignan	1
+RENNES	3
+Rennes	1
+rennes	5
+ROCHEFORT	2
+THOUARE-SUR-LOIRE	1
+
+19.[PL/SQL] Écrire un bloc PL/SQL permettant d’afficher les titres et prix de vente des livres d’une
+commande dont le numéro est saisi au clavier. Traiter le cas où le numéro de commande n’existe
+pas (message d’erreur). Afficher également le total de la commande. Utiliser les fonction et vues
+précédemment créées.
+
+Requete :
+
+DECLARE
+    v_numCom C_COMMANDE.numCom%TYPE;
+    v_total_commande NUMBER;
+BEGIN
+   
+    v_numCom:= &numerocommande;
+
+    SELECT SUM(l.prixNeuf * lc.qte)
+    INTO v_total_commande
+    FROM C_LIGNECOMMANDE lc
+    JOIN C_LIVRE l ON lc.ISBN = l.ISBN
+    WHERE lc.numCom = v_numCom;
+
+    IF v_total_commande IS NULL THEN
+        DBMS_OUTPUT.PUT_LINE('Le numéro de commande saisi n''existe pas.');
+    ELSE
+       
+        DBMS_OUTPUT.PUT_LINE('Détails de la commande ' || v_numCom || ' :');
+        FOR commande IN (SELECT l.titre, l.prixNeuf, lc.qte
+                         FROM C_LIGNECOMMANDE lc
+                         JOIN C_LIVRE l ON lc.ISBN = l.ISBN
+                         WHERE lc.numCom = v_numCom) LOOP
+            DBMS_OUTPUT.PUT_LINE('** Titre : ' || commande.titre || ' - Prix de vente : ' || commande.prixNeuf || ' - Quantité : ' || commande.qte);
+        END LOOP;
+
+        DBMS_OUTPUT.PUT_LINE('Total de la commande avant remise : ' || v_total_commande || ' €');
+        DBMS_OUTPUT.PUT_LINE('Remise : ' || TO_CHAR(v_total_commande * 0.2, 'FM99990.00') || ' €');
+        DBMS_OUTPUT.PUT_LINE('Total à payer : ' || TO_CHAR(v_total_commande * 0.8, 'FM99990.00') || ' €');
+    END IF;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Une erreur s''est produite : ' || SQLERRM);
+END;
+
+Resultat :
+
+Détails de la commande 44 :
+** Titre : Le pèlerin de Compostelle - Prix de vente : 14,42 - Quantité : 5
+** Titre : La rose d'York - Prix de vente : 15,55 - Quantité : 1
+Total de la commande avant remise : 87,65 €
+Remise : 17.53 €
+Total à payer : 70.12 €
+
+20.[PL/SQL] Ecrire un bloc PL/SQL permettant d’afficher la collection de la librairie selon le format
+suivant (utiliser des curseurs paramétrés) :
+Catégorie
+--Auteur (nom et nombre de vente total. Si pas de vente, afficher Aucune vente)
+- Liste des livres de cet auteur et de cette catégorie (titre, prix de vente
+neuf et année d’édition)
+
+Requete :
+

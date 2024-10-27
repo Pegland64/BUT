@@ -1,0 +1,633 @@
+HAUTION ILAN
+LOUNICI ILYES
+S2E
+
+
+TP de synthèse SQL et PL/SQL (R2.06)
+Base de données « Restaurant »
+
+Partie 1 - SQL
+
+A - Création de la base de données
+
+1. Créer les tables de la base avec les clés primaires
+
+CREATE TABLE TABLES(
+    numtab varchar2(50),
+    NbPlace number(2),
+    PRIMARY KEY (numtab)
+);
+
+CREATE TABLE SERVEUR (
+    numserv NUMBER(2),
+    nom varchar2(50),
+    prenom varchar2(50),
+    poste varchar2(50),
+    dateRec varchar2(50),
+    PRIMARY KEY (numserv)
+);
+
+CREATE TABLE AFFECTER(
+    numtab varchar2(50),
+    dateAffect DATE,
+    numserv NUMBER(2),
+    PRIMARY KEY (numtab, dateAffect)
+);
+
+CREATE TABLE COMMANDE (
+    numcom NUMBER(2),
+    numtab VARCHAR2(20),
+    datecom DATE,
+    NbPers NUMBER(2),
+    HeurePay DATE,
+    ModePay VARCHAR2(50),
+    PRIMARY KEY (numcom)
+);
+
+CREATE TABLE PLAT (
+    codePlat VARCHAR2(20),
+    libelle VARCHAR2(100),
+    typeplat VARCHAR2(50),
+    prix NUMBER,
+    PRIMARY KEY (codePlat)
+);
+
+CREATE TABLE CONTIENT (
+    numcom NUMBER(2),
+    codePlat VARCHAR2(20),
+    qte NUMBER(2),
+    PRIMARY KEY (numcom, codePlat)
+);
+
+2. Ajouter les clés étrangères à l'aide d'une requête "ALTER TABLE" et nommer les contraintes.
+
+ALTER TABLE AFFECTER
+ADD FOREIGN KEY (numtab) REFERENCES TABLES(numtab)
+ADD FOREIGN KEY (numserv)REFERENCES SERVEUR(numserv);
+
+ALTER TABLE CONTIENT
+ADD FOREIGN KEY (numcom) REFERENCES COMMANDE(numcom)
+ADD FOREIGN KEY (codePlat) REFERENCES PLAT(codePlat);
+
+ALTER TABLE COMMANDE
+ADD FOREIGN KEY (numtab) REFERENCES TABLES(numtab);
+
+3. Insérer les données dans les tables à partir du fichier disponible sur le cours en ligne.
+
+--Tables
+--Numtab/nbplace
+insert into TABLES values ('T10',4);
+insert into TABLES values ('T11',6);
+insert into TABLES values ('T12',8);
+insert into TABLES values ('T13',4);
+insert into TABLES values ('T14',6);
+insert into TABLES values ('T15',4);
+insert into TABLES values ('T16',4);
+insert into TABLES values ('T17',6);
+insert into TABLES values ('T18',2);
+insert into TABLES values ('T19',4);
+
+--Serveur
+--Numserv/nom/prenom/poste/daterec
+insert into SERVEUR values (1,'Foura','Pablo','barman', '01/01/2016');
+insert into SERVEUR values (2,'Labout', 'Florian','serveur', '01/05/2019');
+insert into SERVEUR values (3,'Riplat','Antoine','maitre d''hôtel', '01/03/2020');
+insert into SERVEUR values (4,'Lacour','Julien','serveur', '01/08/2022');
+insert into SERVEUR values (5,'Rivalo','Erwan','serveur', '01/11/2017');
+
+--Plat
+--Codeplat/libelle/typePlat/prix
+
+insert into plat values ('VD1','filet de boeuf','viande',to_number('13,20'));
+insert into plat values ('ENT1','salade verte','entrée',to_number('3,30'));
+insert into plat values ('ENT2','chèvre chaud','entrée',to_number('4,50'));
+insert into plat values ('ENT3','pâté lorrain','entrée',to_number('4,0'));
+insert into plat values ('ENT4','saumon fumé','entrée',to_number('8,00'));
+insert into plat values ('VD2','entrecôte printanière','viande',to_number('11,00'));
+insert into plat values ('LEG1','gratin dauphinois','plat',to_number('8,75'));
+insert into plat values ('POI1','brochet à l''oseille','poisson',to_number('9,80'));
+insert into plat values ('VD3','gigot d''agneau','viande',to_number('7,60'));
+insert into plat values ('DES1','crème brulée','dessert',to_number('3,00'));
+insert into plat values ('FRG1','munster au cumin','fromage',to_number('3,00'));
+insert into plat values ('POI2','filet de sole au beurre','poisson',to_number('10,00'));
+insert into plat values ('ENT5','foie gras','entrée',to_number('12,10'));
+insert into plat values ('VD4','chevreuil sauce forestière','viande',to_number('11,70'));
+insert into plat values ('ENT6','assiette de crudités','entrée',to_number('4,50'));
+insert into plat values ('DES2','tarte citron','dessert',to_number('5,50'));
+insert into plat values ('DES3','sorbet agrume','dessert',to_number('4,50'));
+insert into plat values ('FRG2','comté','fromage',to_number('5,00'));
+
+--Commande
+--Numcom/numtab/datecom/nbpers/heurepay/modpay)
+insert into commande values (10,'T10',to_date('10/01/2023'),2,to_date('20:50','HH24:MI'),'carte');
+insert into commande values (11,'T11',to_date('11/01/2023'),4,to_date('21:20','HH24:MI'),'cheque');
+insert into commande values (12,'T17',to_date('11/01/2023'),2,to_date('20:55','HH24:MI'),'carte');
+insert into commande values (13,'T12',to_date('10/01/2023'),2,to_date('21:10','HH24:MI'),'espece');
+insert into commande values (14,'T18',to_date('10/01/2023'),1,to_date('21:00','HH24:MI'),'cheque');
+insert into commande values (15,'T10',to_date('11/01/2023'),2,to_date('20:45','HH24:MI'),'carte');
+insert into commande values (20,'T10',to_date('20/02/2023'),2,to_date('12:50','HH24:MI'),'carte');
+insert into commande values (21,'T11',to_date('21/02/2023'),4,to_date('12:20','HH24:MI'),'cheque');
+insert into commande values (22,'T17',to_date('21/01/2023'),2,to_date('13:55','HH24:MI'),'carte');
+insert into commande values (23,'T12',to_date('20/03/2023'),2,to_date('13:10','HH24:MI'),'espece');
+insert into commande values (24,'T18',to_date('20/03/2023'),1,to_date('13:00','HH24:MI'),'cheque');
+insert into commande values (25,NULL,to_date('21/02/2023'),2,to_date('13:45','HH24:MI'),'carte');
+
+--Affecter
+--Numtab/dateAffect/numserv
+insert into affecter values ('T10',to_date('10/01/2023'),1);
+insert into affecter values ('T11',to_date('11/01/2023'),1);
+insert into affecter values ('T12',to_date('10/01/2023'),1);
+insert into affecter values ('T14',to_date('10/01/2023'),2);
+insert into affecter values ('T17',to_date('11/01/2023'),2);
+insert into affecter values ('T18',to_date('10/01/2023'),2);
+insert into affecter values ('T15',to_date('12/01/2023'),3);
+insert into affecter values ('T16',to_date('10/01/2023'),NULL);
+insert into affecter values ('T10',to_date('11/01/2023'),1);
+insert into affecter values ('T10',to_date('20/02/2023'),3);
+insert into affecter values ('T11',to_date('21/02/2023'),2);
+insert into affecter values ('T17',to_date('21/01/2023'),2);
+insert into affecter values ('T12',to_date('20/03/2023'), 1);
+insert into affecter values ('T18',to_date('20/03/2023'), 3);
+
+--Contient
+--Numcom/codeplat/qte
+insert into contient values (10,'VD1',2);
+insert into contient values (10,'ENT1',2);
+insert into contient values (10,'DES1',1);
+insert into contient values (10,'DES3',1);
+insert into contient values (11,'ENT3',2);
+insert into contient values (11,'ENT5',2);
+insert into contient values (11,'VD3',2);
+insert into contient values (11,'POI2',2);
+insert into contient values (11,'DES2',2);
+insert into contient values (11,'DES3',2);
+insert into contient values (12,'ENT6',2);
+insert into contient values (12,'FRG1',2);
+insert into contient values (12,'DES2',1);
+insert into contient values (12,'DES3',1);
+insert into contient values (13,'VD2',2);
+insert into contient values (13,'FRG1',2);
+insert into contient values (13,'DES2',1);
+insert into contient values (13,'DES3',1);
+insert into contient values (14,'ENT3',1);
+insert into contient values (14,'POI1',1);
+insert into contient values (14,'FRG1',1);
+insert into contient values (14,'DES3',1);
+insert into contient values (15,'DES3',2);
+insert into contient values (20,'VD1',2);
+insert into contient values (21,'ENT1',2);
+insert into contient values (22,'DES1',1);
+insert into contient values (23,'DES3',1);
+insert into contient values (24,'ENT3',2);
+insert into contient values (25,'ENT5',2);
+insert into contient values (20,'VD3',2);
+insert into contient values (21,'ENT2',2);
+insert into contient values (22,'DES2',2);
+insert into contient values (24,'ENT6',2);
+insert into contient values (25,'FRG1',2);
+insert into contient values (20,'FRG2',2);
+insert into contient values (21,'LEG1',1);
+insert into contient values (22,'DES3',1);
+insert into contient values (23,'VD2',2);
+insert into contient values (24,'FRG2',2);
+insert into contient values (25,'DES2',1);
+insert into contient values (20,'DES3',1);
+insert into contient values (21,'ENT3',1);
+insert into contient values (22,'POI1',1);
+insert into contient values (23,'FRG1',1);
+insert into contient values (24,'DES3',1);
+insert into contient values (25,'DES3',2);
+
+B - Exprimer en SQL les requêtes permettant de :
+
+1. Afficher le chiffre d’affaires réalisé par chaque serveur (nom)
+
+Commande :
+
+SELECT serveur.nom , SUM(plat.prix * contient.qte) AS Chiffre_Affaires
+FROM SERVEUR
+INNER JOIN AFFECTER ON serveur.numserv = affecter.numserv
+INNER JOIN COMMANDE ON affecter.numtab = commande.numtab
+INNER JOIN CONTIENT ON commande.numcom = contient.numcom
+INNER JOIN PLAT ON contient.codeplat = plat.codePlat
+GROUP BY serveur.nom;
+
+RESULTAT : 
+
+Labout	275,15
+Foura	461,95
+Riplat	158,4
+
+2. Créer une vue MontantCom permettant d’afficher le numéro et la date de la commande ainsi que son
+montant total.
+
+Commande :
+
+CREATE VIEW MONTANTCOM AS
+SELECT COMMANDE.numcom, COMMANDE.datecom, SUM(plat.prix*contient.qte) AS Montant_Total
+FROM COMMANDE INNER JOIN CONTIENT ON COMMANDE.numcom = CONTIENT.numcom
+              INNER JOIN PLAT ON CONTIENT.CODEPLAT =PLAT.CODEPLAT
+GROUP BY COMMANDE.numcom, COMMANDE.datecom;
+
+SELECT*
+FROM MONTANTCOM;
+
+Resultat :
+
+20	20/02/23	56,1
+21	21/02/23	28,35
+23	20/03/23	29,5
+10	10/01/23	40,5
+14	10/01/23	21,3
+13	10/01/23	38
+12	11/01/23	25
+22	21/01/23	28,3
+24	20/03/23	31,5
+11	11/01/23	87,4
+25	21/02/23	44,7
+15	11/01/23	9
+
+3. Afficher les numéros de commande et son montant seulement si celui-ci est supérieur à 80 €, sans
+utiliser la vue puis en utilisant la vue la vue créée précédemment.
+
+Commande : 
+
+SELECT COMMANDE.numcom, SUM(plat.prix*contient.qte) AS Montant_Total
+FROM COMMANDE 	
+GROUP BY COMMANDE.numcom
+Having SUM(plat.prix*contient.qte)>80;
+
+SELECT numcom, Montant_Total
+FROM MontantCom
+WHERE Montant_total >80;
+
+Resultat :
+
+11	87,4
+
+4. Afficher le nom des plats dont le prix est supérieur au prix moyen des plats.
+
+Commande :
+
+SELECT Libelle
+FROM Plat
+where prix > (SELECT AVG(prix)
+             FROM PLAT);
+
+Resultat :
+
+filet de boeuf
+saumon fumé
+entrecôte printanière
+gratin dauphinois
+brochet à l'oseille
+gigot d'agneau
+filet de sole au beurre
+foie gras
+chevreuil sauce forestière
+
+5. Afficher les commandes contenant plus de 3 plats différents.
+
+Commande :
+
+SELECT numcom
+FROM Contient
+Group by numcom
+Having COUNT(DISTINCT CODEPLAT) > 3;
+
+Resultat :
+
+14	4
+11	6
+12	4
+21	4
+10	4
+20	4
+22	4
+13	4
+24	4
+25	4
+
+6. Afficher le nom et poste du serveur ayant réalisé le plus gros chiffre d'affaires.
+
+Commande : 
+
+SELECT serveur.nom, serveur.poste, SUM(plat.prix * contient.qte)AS chiffre_affaires
+FROM SERVEUR
+INNER JOIN AFFECTER ON serveur.numserv = affecter.numserv
+INNER JOIN TABLES ON affecter.numtab = tables.numtab
+INNER JOIN COMMANDE ON tables.numtab = commande.numtab
+INNER JOIN CONTIENT ON commande.numcom = contient.numcom
+INNER JOIN PLAT ON contient.codeplat = plat.codePlat
+GROUP BY serveur.nom, serveur.poste
+ORDER BY chiffre_affaires DESC
+FETCH first 1 rows only;
+//fonction fetch decouvert avec le professeur
+
+Resultat :
+
+Foura	barman	461,95
+
+7. Quel plat d’entrée a été le plus souvent commandé (n° et nom du plat).
+
+Commande :
+
+SELECT contient.codePlat, plat.libelle
+FROM PLAT
+INNER JOIN CONTIENT ON plat.codePlat = contient.codePlat
+WHERE plat.typeplat = 'entrée'
+GROUP BY contient.codePlat, plat.libelle
+HAVING COUNT(contient.codePlat) = (SELECT MAX(compte)
+                                   FROM(SELECT COUNT(contient.codePlat) AS compte
+                                        FROM PLAT
+                                        INNER JOIN CONTIENT ON plat.codePlat = contient.codePlat
+                                        WHERE plat.typeplat = 'entrée'
+                                        GROUP BY plat.codePlat)
+                                        );
+
+Resultat :
+
+ENT3	pâté lorrain
+
+8. Quels plats n’ont jamais été commandés (n° et nom du plat).
+
+Commande :
+
+Select PLAT.CODEPLAT, PLAT.LIBELLE
+From PLAT
+MINUS
+SELECT PLAT.CODEPLAT, PLAT.LIBELLE
+FROM CONTIENT INNER JOIN PLAT ON CONTIENT.CODEPLAT=PLAT.CODEPLAT
+GROUP BY PLAT.CODEPLAT, plat.libelle
+
+Resultat :
+
+ENT4	saumon fumé
+VD4	chevreuil sauce forestière
+
+9. Quel(s) plat(s) figure(nt) dans toutes les commandes du 10/01/2023 (n° et nom du plat).
+
+Commande : 
+
+SELECT plat.codePlat, plat.libelle
+FROM PLAT
+WHERE NOT EXISTS (
+    SELECT *
+    FROM COMMANDE
+    JOIN CONTIENT ON COMMANDE.numcom = CONTIENT.numcom
+    WHERE commande.datecom = TO_DATE('10/01/2023', 'DD/MM/YY')
+    AND NOT EXISTS (
+        SELECT *
+        FROM CONTIENT
+        WHERE CONTIENT.codeplat = PLAT.codePlat
+        AND CONTIENT.numcom = COMMANDE.numcom
+    )
+);
+
+Resultat : 
+
+DES3	sorbet agrume
+
+10. Afficher la liste des numéros de commande comportant un « sorbet agrume » et un « pâté lorrain ».
+
+Commande :
+
+SELECT commande.numcom
+FROM CONTIENT
+INNER JOIN PLAT ON CONTIENT.codePlat = PLAT.codePlat
+INNER JOIN COMMANDE ON CONTIENT.numcom = COMMANDE.numcom
+WHERE PLAT.libelle = 'sorbet agrume' OR PLAT.libelle = 'pâté lorrain'
+GROUP BY commande.numcom
+HAVING COUNT(DISTINCT PLAT.libelle) >= 2;
+
+Resultat :
+
+14
+11
+24
+
+11. Afficher la liste des commandes comportant un “sorbet agrume” mais pas de « pâté lorrain ».
+
+Commande :
+
+SELECT CONTIENT.NUMCOM
+FROM CONTIENT
+WHERE CONTIENT.CODEPLAT = 'DES3'
+AND CONTIENT.NUMCOM NOT IN(
+    SELECT CONTIENT.NUMCOM
+    FROM CONTIENT
+    WHERE CONTIENT.CODEPLAT = 'ENT3'
+);
+
+Resultat :
+
+10
+12
+13
+15
+20
+22
+23
+25
+
+12. Ajouter une colonne MONTANT à la table commande et mettre à jour cette valeur pour toutes les
+commandes
+
+Commande :
+
+ALTER TABLE COMMANDE ADD MONTANT NUMBER(10, 2);
+
+UPDATE COMMANDE
+SET MONTANT = (
+    SELECT SUM(plat.prix * contient.qte)
+    FROM CONTIENT 
+    JOIN PLAT ON contient.codeplat = plat.codePlat
+    WHERE contient.numcom = commande.numcom
+);
+
+Resultat :
+
+Table COMMANDE modifié(e).
+
+
+12 lignes mis à jour.
+
+40,5
+87,4
+25
+38
+21,3
+9
+56,1
+28,35
+28,3
+29,5
+31,5
+44,7
+
+13. On souhaite afficher toutes les commandes avec les noms des serveurs ayant servi ces tables
+(numcom, numtab, nom, prénom).
+
+Commande :
+
+SELECT COMMANDE.NUMCOM, COMMANDE.NUMTAB, SERVEUR.NOM, SERVEUR.PRENOM
+FROM COMMANDE
+INNER JOIN AFFECTER ON AFFECTER.NUMTAB = COMMANDE.NUMTAB AND AFFECTER.DATEAFFECT = COMMANDE.DATECOM
+INNER JOIN SERVEUR ON AFFECTER.NUMSERV = SERVEUR.NUMSERV;
+
+Resultat :
+
+10	T10	Foura	Pablo
+11	T11	Foura	Pablo
+12	T17	Labout	Florian
+13	T12	Foura	Pablo
+14	T18	Labout	Florian
+15	T10	Foura	Pablo
+20	T10	Riplat	Antoine
+21	T11	Labout	Florian
+22	T17	Labout	Florian
+23	T12	Foura	Pablo
+24	T18	Riplat	Antoine
+
+14. Supprimer la colonne montant de la table commande.
+
+Commande :
+
+ALTER TABLE COMMANDE DROP COLUMN MONTANT;
+
+Resultat :
+
+Table COMMANDE modifié(e).
+
+Partie 2 – PL/SQL
+
+1. Ecrire une fonction stockée qui étant donnée un numéro de commande retourne son montant. En cas
+d’erreur la fonction retourne NULL.
+
+Commande :
+
+CREATE OR REPLACE FUNCTION GetMontantCommande(
+    parametre_numcom IN COMMANDE.numcom%TYPE
+) RETURN NUMBER
+IS
+    variable_montant NUMBER;
+BEGIN
+    SELECT SUM(plat.prix * contient.qte)
+    INTO variable_montant
+    FROM COMMANDE
+    JOIN CONTIENT ON commande.numcom = contient.numcom
+    JOIN PLAT ON contient.codeplat = plat.codePlat
+    WHERE commande.numcom = parametre_numcom;
+
+    RETURN variable_montant;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+END;
+
+Resultat :
+
+Elément Function GETMONTANTCOMMANDE compilé
+
+2. Ecrire une procédure stockée permettant d’ajouter un plat à une commande. Le numéro de
+commande, le code du plat et la quantité sont donnés en paramètre.
+Il faudra vérifier la validité du numéro de commande et du code du plat. Un paramètre de sortie
+indiquera les erreurs (vaut 1 si commande invalide, vaut 2 si plat invalide vaut 3 si erreur au niveau de
+l’insertion). Utiliser des exceptions.
+
+Commande :
+
+CREATE OR REPLACE PROCEDURE AjouterPlatACommande(
+    p_numcom IN NUMBER,
+    p_codeplat IN NUMBER,
+    p_qte IN NUMBER,
+    p_erreur OUT NUMBER
+) IS
+BEGIN
+    DECLARE
+        commande_valide NUMBER;
+        plat_valide NUMBER;
+    BEGIN
+
+        SELECT COUNT(*) INTO commande_valide
+        FROM COMMANDE
+        WHERE numcom = p_numcom;
+
+        IF commande_valide = 0 THEN
+            p_erreur := 1; 
+            RETURN;
+        END IF;
+
+
+        SELECT COUNT(*) INTO plat_valide
+        FROM PLAT
+        WHERE codeplat = p_codeplat;
+
+        IF plat_valide = 0 THEN
+            p_erreur := 2; 
+            RETURN;
+        END IF;
+
+        INSERT INTO CONTIENT (numcom, codeplat, qte)
+        VALUES (p_numcom, p_codeplat, p_qte);
+        
+        p_erreur := 0;
+    EXCEPTION
+        WHEN OTHERS THEN
+            p_erreur := 3;
+            RAISE;
+    END;
+END;
+
+Resultat :
+
+Elément Procedure AJOUTERPLATACOMMANDE compilé
+
+3. Modifier le code de la procédure précédente pour traiter le cas de la saisie du premier plat d’une
+nouvelle commande. Le numéro de la table et le nombre de personne sont donnés en paramètre. Le
+numéro de commande est généré grâce à une séquence.
+
+Commande :
+
+
+
+Resultat : 
+
+
+
+4. Ecrire une fonction qui étant donné un jour retourne un numéro de serveur disponible, c’est-à-dire non
+affecté à une table. La fonction retourne NULL si aucun serveur n’est disponible.
+
+Commande :
+
+CREATE OR REPLACE FUNCTION GetServeurDisponible(
+    parametre_jour IN DATE
+) RETURN NUMBER
+IS
+    variable_numserveur SERVEUR.numserv%TYPE;
+BEGIN
+    SELECT serveur.numserv INTO variable_numserveur
+    FROM SERVEUR
+    WHERE NOT EXISTS (
+        Select serveur.numserv
+    )
+
+    RETURN variable_numserveur;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN NULL;
+END;
+
+Resultat :
+
+Elément Function GETSERVEURDISPONIBLE compilé
+
+5. Ecrire un bloc PL/SQL permettant d’afficher pour un numéro de commande saisi au clavier, la date, la
+liste des plats, le prix unitaire, la quantité ainsi que le montant total de la facture. Utiliser les fonctions
+précédentes.
+
+Commande :
+
+
+Resultat : 
+

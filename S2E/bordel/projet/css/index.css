@@ -1,0 +1,68 @@
+.titre{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: blue;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  
+  .nav{
+    display: flex;
+    justify-content: center;
+    margin:50px;
+    justify-content: space-between;
+  
+  }
+  
+  .content{
+    background-color: green;
+    border-radius: 10px;
+    padding: 0 20px 0 20px;
+    width: 30%;
+    text-align:center;
+    img{
+      width : 425px;
+      height : 250px;
+      display: flex;
+      justify-content: center;
+    }
+  }
+
+  .apropos{
+    background-color: rgb(255, 247, 0);
+    border-radius: 10px;
+    padding: 0 20px 0 20px;
+    display: flex;
+    justify-content: center;
+  }
+  .imagedefond { 
+  
+    background-image: url("../images/priere.png");
+    background-color: grey
+   
+  }
+
+  .contentap{
+    background-color: rgb(255, 153, 0);
+    border-radius: 10px;
+    padding: 0 20px 0 20px;
+    text-align:center;
+    img{
+      width : 425px;
+      height : 250px;
+      display: flex;
+      justify-content: center;
+    }
+  }
+ 
+  .titreap{
+    color: white;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    background-color: green;
+    border-radius: 10px;
+    padding: 20px;
+  }

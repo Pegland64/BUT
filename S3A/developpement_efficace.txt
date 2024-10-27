@@ -1,0 +1,103 @@
+Exercice 1 P8 :
+
+Fonction créerTableVote(nbCandidats : entier, nbVotants : entier) : TabVote
+    Début
+        tab <-- tabvide()
+        Pour i de 1 à nbCandidats faire 
+        adjtab(tab,i,0)
+        FinPour
+
+        Pour j de 1 à nbVotants faire
+            vote <-- lire()
+            chgtab(tab, vote, accestab(tab, vote) + 1)
+        FinPour
+        Retourner tab
+    Fin
+lexique : TabVote = Table [[1..nbCandidats] --> entier]
+  i:
+  NbCandidats:
+  nbVotant:
+  vote: entier, le candidat choisi par i
+  tab: Tableau de vote
+  
+  
+Ex2
+Fonction CreerTabInverse(Tab1 : TabNomTel): TabTelNom
+debut
+     tab2 <-- tabvide()
+     pour chaque nom dans dom(tab1) faire
+     adjtab(tab2, accèstab(tab1, nom), nom)
+     fpour
+     retourne tab2
+fin
+
+Ex3
+Fonction créeTabRésultat(m:entier, tabReponse:Table[[1..20]-->chaine], nbMin:entier):TabCand
+debut
+tab<--tabvide()
+adjtab(tab, 1,(<< >>, -1, << >>))
+pour i de 1 à n faire
+nomCand <-- lire()
+pour j de 1 à 20 faire réponse <-- lire()
+si réponse = accèstab(tabReponse, j) alors totpts <-- totpts + j 
+fsi
+fpour
+si totpts>=nbMin alors libellé <-- <<admis>> sinon libellé <-- <<refusé>> 
+fsi
+fpour
+k<--1
+tant que totpts <= accèstab(tab, k) nbpts faire k<--k+1 ftant
+retourne tab
+fin
+
+
+
+
+Exercice 1 :
+
+Fonction fact(n:entier) : entier
+debut
+si n=0 alors
+retourne 1
+sinon retourne fact(n-1) * n
+fin
+fin
+
+exercice 2 :
+
+Fonction triangle (n : entier) : Tablepascal[1..n]
+début
+
+si n = 0
+retourner 0
+
+Fonction HaNoï (n:entier, dep:entier, arrivée : entier)
+debut
+	si n=1 alors ecrire ("déplacer disque de", dep, "à", arrivée)
+	sinon
+		HaNoï (n-1, dep, intermediare(dép, arrivé))
+		HaNoï (1, dep, arrivée)
+		HaNoï (n-1, intermediaire(dép, arrivée), arrivé)
+	fsi
+fin
+
+1.
+fonction valeurnm(n entier, p entier): entier
+debut
+	si (p=0) ou (n=0) alors b<=1
+	sinon
+		b<- valeurnm(n-1, p-1) + binome (n-1,p)
+	fsi
+	retourne b
+fin
+
+2.
+fonction inverse (p:chaine):chaine
+	début
+		si ch =/ "" alors
+			n <- longueur(ch)
+			newch <- concat(ieme(ch, n-1),inverse(sous-chaine(ch,0,n-2)))
+		fsi
+		retourne newch
+	fin
+	

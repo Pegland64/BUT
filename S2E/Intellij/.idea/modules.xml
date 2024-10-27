@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/2024_SAE_2.2_Haution_Lounici/2024_SAE_2.2_Haution_Lounici.iml" filepath="$PROJECT_DIR$/2024_SAE_2.2_Haution_Lounici/2024_SAE_2.2_Haution_Lounici.iml" />
-      <module fileurl="file://$PROJECT_DIR$/2024_Zeldiablo_haution2u_lounici5u_denis154u_armbrust5u/2024_Zeldiablo_haution2u_lounici5u_denis154u_armbrust5u.iml" filepath="$PROJECT_DIR$/2024_Zeldiablo_haution2u_lounici5u_denis154u_armbrust5u/2024_Zeldiablo_haution2u_lounici5u_denis154u_armbrust5u.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/Intellij.iml" filepath="$PROJECT_DIR$/.idea/Intellij.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/IntelliJ.iml" filepath="$PROJECT_DIR$/.idea/IntelliJ.iml" />
     </modules>
   </component>
 </project>

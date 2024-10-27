@@ -1,0 +1,26 @@
+<html>
+<head lang="fr">
+    <meta charset="utf-8">
+<title>Exemple de saisie</title>
+</head>
+<body>
+<script >
+        let nombreChaine;
+        let sal = 0;
+        let oui = 0;
+        for (i = 0; i < 5; i++){
+  		nombreChaine = prompt("Donner un entier"," ");
+  		let nombre = parseInt(nombreChaine);
+        if(nombre % 2 === 0){
+            document.write('<p>'+nombre+': Entier saisi pair</p>');
+            sal++;
+            oui += nombre;
+        }else{
+      	    document.write('<p>'+ nombre+': Entier saisi impair</p>');
+            oui += nombre;
+        }
+        }
+        alert('nombre dentiers pair : ' + sal + ' moyenne : ' + oui/5);
+</script>
+</body>							
+</html>

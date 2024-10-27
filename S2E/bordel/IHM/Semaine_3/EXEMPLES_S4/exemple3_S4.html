@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head lang="fr">
+    <meta charset="utf-8">
+    <title>canvas</title>
+</head>
+
+<body>
+<h1>exemple 3 canvas</h1>
+<canvas id="canevas" width="300" height="300">
+    Désolé, votre navigateur ne prend pas en charge &lt;canvas&gt;.
+  </canvas>
+  
+
+<script >
+
+function dessiner() {
+  var canevas = document.getElementById('canevas');
+  if (canevas.getContext) {
+    var ctx = canevas.getContext('2d');
+
+    // Triangle plein
+    ctx.beginPath();
+    ctx.moveTo(25, 25);
+    ctx.lineTo(105, 25);
+    ctx.lineTo(25, 105);
+    ctx.fill();
+
+    // Triangle filaire
+    ctx.beginPath();
+    ctx.moveTo(125, 125);
+    ctx.lineTo(125, 45);
+    ctx.lineTo(45, 125);
+    ctx.closePath();
+    ctx.stroke();
+
+    //cercle
+    ctx.beginPath();
+    
+    ctx.arc(150, 50, 20,0,2*Math.PI*20,0 );
+    
+    ctx.fill();
+  }
+}
+window.onload=dessiner;
+
+</script>
+
+</body>
+</html>

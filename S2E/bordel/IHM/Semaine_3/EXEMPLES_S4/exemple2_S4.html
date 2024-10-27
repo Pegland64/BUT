@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head lang="fr">
+    <meta charset="utf-8">
+    <title>canvas</title>
+</head>
+
+<body>
+<h1>exemple 1 canvas</h1>
+<canvas id="canvas" width="300" height="300">
+    Désolé, votre navigateur ne prend pas en charge &lt;canvas&gt;.
+  </canvas>
+  
+
+<script >
+
+function draw() {
+    var canvas = document.getElementById('canvas');
+    if (canvas.getContext) {
+      var ctx = canvas.getContext('2d');
+  
+      ctx.fillRect(25, 25, 100, 100);
+      ctx.clearRect(45, 45, 60, 60);
+      ctx.strokeRect(50, 50, 50, 50);
+    }
+  }  
+window.onload=draw;
+
+</script>
+
+</body>
+</html>

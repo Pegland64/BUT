@@ -1,0 +1,41 @@
+html {
+    
+}
+
+body {
+    font-family: Arial;
+}
+
+.container {
+    display grid;
+    padding: 1.5em;
+    margin: 1.5em;
+}
+
+.intro {
+    
+}
+
+.infos {
+    
+}
+
+.sidebar {
+    
+}
+
+h2 {
+
+}
+
+.sidebar > div > a {
+
+}
+
+.actions {
+    
+}
+
+.liens {
+    
+}
